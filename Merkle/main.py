@@ -6,8 +6,10 @@ import hashlib
 class Node:
     def __init__(self, item):   #节点的内容
         self.item = item
-        self.child1 = None
-        self.child2 = None
+
+        self.left = None
+        self.right = None
+
         self.hash = None
         self.data = None
 
@@ -53,18 +55,35 @@ class Tree:
             q = [self.root]
             while True:
                 pop_node = q.pop(0)    #以栈内第一个节点为根节点
-                if pop_node.child1 is None:    #如果根节点的左子树是空的就把该节点加入
-                    pop_node.child1 = node
+                if pop_node.left is None:    #如果根节点的左子树是空的就把该节点加入
+                    pop_node.left = node
                     return
-                elif pop_node.child2 is None:   #如果根节点的右子树是空的就把该节点加入
-                    pop_node.child2 = node
+                elif pop_node.right is None:   #如果根节点的右子树是空的就把该节点加入
+                    pop_node.right = node
                     return
                 else:
-                    q.append(pop_node.child1)     #左右子树入栈
-                    q.append(pop_node.child2)
+                    q.append(pop_node.left)     #左右子树入栈
+                    q.append(pop_node.right)
 
     def reload_hash(self):  # 层次遍历更新hash
-        pass
+        if self.root is None:
+            return None
+        temp = [self.root]  # 根节点入栈
+        item = [(self.root.item, self.root.data, self.root.hash)]
+        while temp != []:
+            pop_node = temp.pop(0)
+            if pop_node.left and pop_node.right:
+                if pop_node.left and pop_node.right:
+                    print("更新节点", pop_node.item, end=" ")
+                    end_str = pop_node.left.hash + pop_node.right.hash
+                    end_hash = pop_node.change_data(end_str)  # 把左右孩子节点的hash进行hash得出父节点的hash值
+                    print("end_hash= %s " % (end_hash))
+            if pop_node.left is not None:
+                temp.append(pop_node.left)
+
+            if pop_node.right is not None:
+                temp.append(pop_node.right)
+            return
 
     def traverse(self):  # 层次遍历
         pass
@@ -73,5 +92,9 @@ if __name__ == '__main__':
     t = Tree()
     for i in range(10):  # 基础节点
         t.add(i)
+
+    for i in range(4, 0, -1):  # 刷新基础节点hash值
+        print("第", i, '层节点hash刷新:')
+        print(t.reload_hash())
 
 
