@@ -1,4 +1,6 @@
 ﻿  源.cpp
-F:\practise\生日攻击\birthhday attack\源.cpp(35,51): warning C4267: “初始化”: 从“size_t”转换到“unsigned int”，可能丢失数据
-F:\practise\生日攻击\birthhday attack\源.cpp(40,9): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 1 拥有了类型“unsigned int *”
-  birthhday attack.vcxproj -> F:\practise\生日攻击\birthhday attack\x64\Debug\birthhday attack.exe
+F:\practise\生日攻击\birthday attack\源.cpp(37,52): warning C4267: “初始化”: 从“size_t”转换到“unsigned int”，可能丢失数据
+F:\practise\生日攻击\birthday attack\源.cpp(42,10): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 1 拥有了类型“unsigned int *”
+  sm3hash.h
+  正在生成代码...
+  birthhday attack.vcxproj -> F:\practise\生日攻击\birthday attack\x64\Debug\birthhday attack.exe
