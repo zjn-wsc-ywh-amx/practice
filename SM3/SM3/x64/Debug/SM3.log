@@ -1,0 +1,5 @@
+﻿  SM3.cpp
+E:\大二下\创新创业\SM3\SM3\SM3.cpp(75,22): warning C4018: “<”: 有符号/无符号不匹配
+E:\大二下\创新创业\SM3\SM3\SM3.cpp(80,22): warning C4018: “<”: 有符号/无符号不匹配
+E:\大二下\创新创业\SM3\SM3\SM3.cpp(104,21): warning C4018: “<”: 有符号/无符号不匹配
+  SM3.vcxproj -> E:\大二下\创新创业\SM3\x64\Debug\SM3.exe
