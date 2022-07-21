@@ -144,10 +144,10 @@ int main()
     //example 2
     unsigned char msg2[3] = { 0x61,0x62,0x63 };
     unsigned char msg3[6] = "12223";
-    time_t sta, end;
-    sta = clock();
-    for(int i=0;i<1000000;i++)
-    sm3(msg2, sizeof(msg2));
-    end = clock();
-    cout << "time :" << double(end - sta) / CLOCKS_PER_SEC << endl;
+    //time_t sta, end;
+   // sta = clock();
+    //for(int i=0;i<1000000;i++)
+    //sm3(msg2, sizeof(msg2));
+   // end = clock();
+    //cout << "time :" << double(end - sta) / CLOCKS_PER_SEC << endl;//测试一百万次hash值用时8s
 }
