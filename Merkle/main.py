@@ -11,13 +11,14 @@ class Node:
         self.right = None
 
         self.hash = None
-        self.data = None   #如果data不是None那么就是叶子节点
+        self.data = None
 
         self.parent=None   #指向父节点
+        self.flag=0  #如果flag不是0那么就是叶子节点
 
     def change_data(self, data):   #  求出每个节点的hash值
         self.data = data
-        self.hash = hashlib.md5(data.encode('utf-8')).hexdigest()[8:-8]  # hexdigest()返回摘要，作为十六进制数据字符串值 [8:-8]将32位MD5转换为16进制
+        self.hash =Hash(data)  # hexdigest()返回摘要，作为十六进制数据字符串值
         print("make_hash", self.hash, "size", len(self.hash), end=" ")
         return self.hash
 
@@ -27,19 +28,30 @@ def generate_value(i):
         raw_str = "base content"
         nums = math.floor(1e5 * random.random())  # 获取数字的下限
         nums = str(nums)
+        #nums=input('请输入区块的值')
         nums = nums.zfill(5)  # 右对齐前面填0
         end_str = raw_str + nums
-        print("end_str", end_str)
+        print("data", end_str)
         return end_str
     # elif i >= 0 and i < 7:                        #产生不带数据节点
     #   return None
     else:
         return -1
+def Hash(string):
+    s = hashlib.sha256()
+    s.update(string.encode())
+    b = s.hexdigest()
+    return b
+
 
 class Tree:
 
     def __init__(self):
         self.root = None
+        self.time = 0
+        self.num=0
+        self.root_obj=None
+
 
     def generatr_tree(self, itemlist):  # 逐层添加子节点
         elelist = []
@@ -56,21 +68,25 @@ class Tree:
         return elelist
 
 ################构建根#############
+
     def merkle(self,elelist):
-        time=0
-        num=0
+
+###############如果节点为奇数个就要复制
+
         if len(elelist)==1:
-            return elelist.pop(0)
-        
-        if len(elelist) !=0 and elelist[0].data is not None:
+            print("结束")
+            self.root_obj=elelist.pop(0)
+            return self.root_obj
+
+        if len(elelist) !=0 and elelist[0].flag==elelist[1].flag:
             pop_left=elelist.pop(0)
         else:
             pop_left=None
-        if len(elelist) !=0 and elelist[0].data is not None:
+        if len(elelist) !=0 and pop_left.flag==elelist[0].flag:
             pop_right=elelist.pop(0)
         else:
             pop_right=None
-        name="parent"+str(num)
+        name="parent"+str(self.num)
         node_parent=Node(name)    ##初始化一个父亲节点
 
         if pop_left and pop_right is not None:
@@ -78,48 +94,40 @@ class Tree:
             pop_right.parent=node_parent
             node_parent.left=pop_left
             node_parent.right=pop_right
-            node_parent.hash=hash(pop_left.hash+pop_right.hash)  ####构造父节点的hash
+            node_parent.hash=Hash(pop_left.hash+pop_right.hash)  ####构造父节点的hash
+            node_parent.flag=node_parent.flag^1
+            print("left hash %s ,right hash %s ,hash %s"%(pop_left.hash,pop_right.hash,node_parent.hash))
             elelist.append(node_parent)
 
-        elif pop_left  is  None:
+
+        elif pop_left  is  None and pop_right is not None :
             pop_right.parent = node_parent
             node_parent.right = pop_right
-            node_parent.hash = hash( pop_right.hash)
+            node_parent.hash = Hash( pop_right.hash)
+            node_parent.flag = node_parent.flag ^ 1
             elelist.append(node_parent)
             print("叶子节点遍历完毕")
 
-        elif pop_right  is  None:
+
+        elif pop_right  is  None and pop_left is not None:
             pop_left.parent = node_parent
             node_parent.left= pop_left
-            node_parent.hash = hash(pop_left.hash)
+            node_parent.hash = Hash(pop_left.hash)
+            node_parent.flag = node_parent.flag ^ 1
             elelist.append(node_parent)
             print("叶子节点遍历完毕")
+
 
         elif pop_left is None and pop_right is  None:
 
             print("叶子节点遍历完毕")
 
-        ########递归构建##########
-        print("第 %d层 " % (time))
-        time=time+1
-        self.merkle(elelist)
 
-        num=num+1
-        if self.root is None:
-            self.root = node
-        else:
-            q = [self.root]
-            while True:
-                pop_node = q.pop(0)    #以栈内第一个节点为根节点
-                if pop_node.left is None:    #如果根节点的左子树是空的就把该节点加入
-                    pop_node.left = node
-                    return
-                elif pop_node.right is None:   #如果根节点的右子树是空的就把该节点加入
-                    pop_node.right = node
-                    return
-                else:
-                    q.append(pop_node.left)     #左右子树入栈
-                    q.append(pop_node.right)
+        ########递归构建##########
+        print("第 %d层 " % (self.time))
+        self.time=self.time+1
+        self.num=self.num+1
+        self.merkle(elelist)
 
 
     def reload_hash(self):  # 层次遍历更新hash
@@ -142,29 +150,94 @@ class Tree:
                 temp.append(pop_node.right)
             return
 
-    def traverse(self):  # 层次遍历
-        if self.root is None:
-            return None
-        temp=[self.root]
-        store=[(self.root.item,self.root.data,self.root.hash)]
+def traverse(root_node):  # 层次遍历
+       # if root_node.root is None:
+       #     return None
+
+        temp=[root_node]
+        store=[(root_node.item,root_node.data,root_node.hash)]
+
         while temp!=[]:
             node=temp.pop(0)
+
+
+
             if node.left is not None:
                 temp.append(node.left)
                 store.append((node.left.item,node.left.data,node.left.hash))
-            elif node.right is not None:
+
+            if node.right is not None:
                 temp.append(node.right)
                 store.append((node.right.item,node.right.data,node.right.hash))
 
         return (store)
 
+
+def POP(root_obj,id):  #返回关键路径
+    #######根据item在列表里面找到相应的hash
+    temp = [root_obj]
+    store = [(root_obj.item, root_obj.data, root_obj.hash)]
+    key=[]
+    while temp != []:
+        node = temp.pop(0)
+        if len(temp)==0:
+            key.append(node.hash)   ####返回根hash
+
+        if(node.hash==id):
+            parent=node.parent
+            temp.append(parent)
+
+            if(parent.left.item!=id):
+              brother=parent.left
+              key.append(brother.hash)
+              id = parent.item
+
+            if (parent.right.item != id):
+                brother = parent.right
+                key.append(brother.hash)
+                id = parent.item
+
+        if node.left is not None:
+            temp.append(node.left)
+            store.append((node.left.item, node.left.data, node.left.hash))
+
+        if node.right is not None:
+            temp.append(node.right)
+            store.append((node.right.item, node.right.data, node.right.hash))
+
+    return key
+
+def POA(root_obj,id):
+    #返回上一个前一个id和后一个id的存在性证明 最大的小于目标交易的交易，记为pre，最小的大于目标交易的交易，记为next 这两个节点相邻且都存在于merkle中
+    ##找到next 就是第一个节点大于id
+    temp = [root_obj]
+    store = [(root_obj.item, root_obj.data, root_obj.hash)]
+
+    while temp != []:
+        node = temp.pop(0)
+
+        if(node.item!=)
+
+        if node.left is not None:
+            temp.append(node.left)
+            store.append((node.left.item, node.left.data, node.left.hash))
+
+        if node.right is not None:
+            temp.append(node.right)
+            store.append((node.right.item, node.right.data, node.right.hash))
+
+    return (store)
+
 if __name__ == '__main__':
     t = Tree()
+    itemList=[]
     for i in range(10):
-        t.add(i)
+        itemList.append(i)
 
-    for i in range(4, 0, -1):  # 刷新基础节点hash值
-        print("第", i, '层节点hash刷新:')
-        print(t.reload_hash())
-print('前序遍历:\n节点名:数据：hash值', t.traverse())
+    list1=t.generatr_tree(itemList)
+    t.merkle(list1)
+    print(t.root_obj.hash)
+    print('前序遍历:\n节点名:数据：hash值', traverse(t.root_obj))
+    print("关键路径为",POP(t.root_obj,id=2))
+
 
