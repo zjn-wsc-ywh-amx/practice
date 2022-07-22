@@ -1,5 +1,7 @@
 #pragma once
 #include<stdio.h>
+#include<windows.h>
+
 #define u8 unsigned char
 #define u32 unsigned int
 
