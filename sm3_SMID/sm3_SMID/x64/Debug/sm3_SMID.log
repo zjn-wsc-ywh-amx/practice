@@ -1,0 +1,5 @@
+﻿  sm3_SIMD.cpp
+D:\desk\大二下ppt\创新创业课程\sm3_c\sm3_SMID\sm3_SMID\sm3_SIMD.cpp(50,16): warning C4244: “初始化”: 从“__int64”转换到“int”，可能丢失数据
+D:\desk\大二下ppt\创新创业课程\sm3_c\sm3_SMID\sm3_SMID\sm3_SIMD.cpp(99,38): warning C4101: “T”: 未引用的局部变量
+D:\desk\大二下ppt\创新创业课程\sm3_c\sm3_SMID\sm3_SMID\sm3_SIMD.cpp(156,19): warning C4244: “初始化”: 从“__int64”转换到“int”，可能丢失数据
+  sm3_SMID.vcxproj -> D:\desk\大二下ppt\创新创业课程\sm3_c\sm3_SMID\x64\Debug\sm3_SMID.exe
