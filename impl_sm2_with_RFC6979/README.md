@@ -1,6 +1,6 @@
 #impl RFC6979 on SM2
 
-注：测试本代码需要安装gmssl库
+注：测试本代码需要安装gmssl库（可恶github和typora上显示的居然不一样，凑合看吧）
 
 ## RFC6979
 
