@@ -1,87 +1,143 @@
+# coding:utf-8
+# 欧几里得算法求最大公约数
+#https://www.jianshu.com/p/eece4117cb63
+import copy
 import hashlib
-import ecdsa
 import random
-
-import numpy as np
-
-def gcd(a, b):
-    while a != 0:
-        a, b = b % a, a
+def get_gcd(a, b):
+    k = a // b
+    remainder = a % b
+    while remainder != 0:
+        a = b
+        b = remainder
+        k = a // b
+        remainder = a % b
     return b
 
 
-# 定义一个函数，参数分别为a,n，返回值为b
-def inverse(a, m):  # 这个扩展欧几里得算法求模逆
-
-    if gcd(a, m) != 1:
-        return None
-    u1, u2, u3 = 1, 0, a
-    v1, v2, v3 = 0, 1, m
-    while v3 != 0:
-        q = u3 // v3
-        v1, v2, v3, u1, u2, u3 = (u1 - q * v1), (u2 - q * v2), (u3 - q * v3), v1, v2, v3
-    return u1 % m
-
-def sign(e, k, d, P, p):    # e: H(message)  k randomly chosen 0 < k < q
-    Q = k*P
-    s = np.mod(inverse(k, p)*(e + d*Q.x), p)
-    return s, Q.x
+# 改进欧几里得算法求线性方程的x与y
+def get_(a, b):
+    if b == 0:
+        return 1, 0
+    else:
+        k = a // b
+        remainder = a % b
+        x1, y1 = get_(b, remainder)
+        x, y = y1, x1 - k * y1
+    return x, y
 
 
-def verify(e, s, r, G, P, p):
-    Q1 = np.mod(e*inverse(s, p), p)*G
-    Q2 = np.mod(r*inverse(s, p), p)*P
-    R = Q1+Q2
-    if R.x == r:
-        return True, R.x
-    return False, R.x
+# 返回乘法逆元
+def multi_inverse(a, b):
+    # 将初始b的绝对值进行保存
+    if b < 0:
+        m = abs(b)
+    else:
+        m = b
+
+    flag = get_gcd(a, b)
+    # 判断最大公约数是否为1，若不是则没有逆元
+    if flag == 1:
+        x, y = get_(a, b)
+        x0 = x % m  # 对于Python '%'就是求模运算，因此不需要'+m'
+        # print(x0) #x0就是所求的逆元
+        return x0
+
+    else:
+        print("Do not have!")
+
+### y^2=x^3+ax+by mod (mod_value)
+def Point_Add(P,Q):
+    if P[0] == Q[0]:
+        fenzi = (3 * pow(P[0], 2) + a)
+        fenmu = (2 * P[1])
+        if fenzi % fenmu != 0:
+            val = multi_inverse(fenmu, 17)
+            y = (fenzi * val) % 17
+        else:
+            y = (fenzi / fenmu) % 17
+    else:
+        fenzi = (Q[1] - P[1])
+        fenmu = (Q[0] - P[0])
+        if fenzi % fenmu != 0:
+            val = multi_inverse(fenmu, 17)
+            y = (fenzi * val) % 17
+        else:
+            y = (fenzi / fenmu) % 17
+
+    Rx = (pow(y, 2) - P[0] - Q[0]) % 17
+    Ry = (y * (P[0] - Rx) - P[1]) % 17
+    return(Rx,Ry)
 
 
-gen = ecdsa.NIST256p.generator
+def Multi(n, point):
+    if n == 0:
+         return 0
+    elif n == 1:
+        return point
+
+    t = point
+    while (n >= 2):
+        t = Point_Add(t, point)
+        n = n - 1
+    return t
+
+def ECDSA_Sign(m, G, d,k):
+    e = Hash(m)
+    R = Multi(k, G)   #R=kg
+    #print("R",R)
+    r = R[0] % mod_value      #r=R[x] mod mod_value
+    s = (multi_inverse(k, mod_value) * (e + d * r)) % mod_value
+    return r, s
 
 
-order = gen.order()
-# 生成私钥d_A
-d_A = random.randrange(1,order-1)
-# 生成公私钥对象
-print("d_A",d_A)
-#生成公钥
-public_key = ecdsa.ecdsa.Public_key(gen,gen * d_A)
-private_key = ecdsa.ecdsa.Private_key(public_key,d_A)
 
-message = "message"
-m = int(hashlib.sha1(message.encode("utf8")).hexdigest(),16)
+def Hash(string):
+    s = hashlib.sha256()
+    s.update(string.encode())
+    b = s.hexdigest()
+    return int(b,16)
 
 
-# 临时密钥
-k = random.randrange(1,order-1)
 
+mod_value = 19
+a = 2
+b = 2
+G=[7,1]
+k=2
+message="hello word"
+#print(Point_Add([5,1],G))
+#print(Multi(k,G))
+d=5
 
-# 签名
-#signature = private_key.sign(m,k)
-#r = signature.r
-#s = signature.s
-#print(r,s)
+r,s=ECDSA_Sign(message,G,d,k)
+P = Multi(d, G)
+print("公钥为",P)
+#print((r,s))
 
+def Verify(r, s,e, G, P):
+    w = multi_inverse(s, mod_value)
+    ele1 = (e * w) % mod_value
+    ele2 = (r * w) % mod_value
+    w = Point_Add(Multi(ele1, G), Multi(ele2, P))
+    if (w == 0):
+        return False
+    else:
+        if (w[0] % mod_value == r):
+            print("伪造通过")
+            return 1
+        else:
+            return 0
 
-F = GF (0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2F)  #生成一个给定阶数的全局唯一有限域
-C = EllipticCurve ([F (0), F (7)])     #构造出椭圆曲线
+#7.One can forge signature if the verification does not check m
+def Pretend(r, s,G, P):
+    u = 3
+    v = 3
+    r_forge = Point_Add(Multi(u, G), Multi(v, P))[0]
+    print(u,v)
+    e_forge = (r_forge * u * multi_inverse(v, mod_value)) %mod_value
+    s_forge = (r_forge * multi_inverse(v, mod_value)) % mod_value
+    if(Verify( r_forge, s_forge,e_forge, G, P)):
+        return (r_forge,s_forge)
 
-
-G = C.lift_x(0x79BE667EF9DCBBAC55A06295CE870B07029BFCDB2DCE28D959F2815B16F81798)
-N = GF (C.order())
-P = P=-C.lift_x(0x11db93e1dcdb8a016b49840f8c53bc1eb68a382e97b1482ecad7b148a6909a5c) # block 9 coinbase payout key.
-
-def forge(c, a=-1):  # Create a forged 'ECDSA'  (hashless) signature
-  # set a to something other than -1 to be less obvious
-  a = N(a)
-  R = c*G + int(a)*P
-  s = N(int(R.xy()[0]))/a
-  m = N(c)*N(int(R.xy()[0]))/a
-  print ('hash1 = %d'%m)
-  print ('r1 = %d'%(int(R.xy()[0])))
-  print ('s1 = %d'%s)
-def verify():
-    pass
-for c in range(1,10):
-  forge(c)
+print("伪造的签名",Pretend(r,s,G,P))
