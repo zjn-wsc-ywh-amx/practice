@@ -81,6 +81,22 @@ def Multi(n, point):
         n = n - 1
     return t
 
+
+def double(point):
+    return Point_Add(point,point)
+
+
+def fast_Multi(n, point):
+    if n == 0:
+         return 0
+    elif n == 1:
+        return point
+    elif n%2==0:
+        return Multi(n/2,double(point))
+    else:
+        return Point_Add(Multi((n-1)/2,double(point)),point)
+
+
 def ECDSA_Sign(m, G, d,k):
     e = Hash(m)
     R = Multi(k, G)   #R=kg

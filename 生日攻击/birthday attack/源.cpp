@@ -39,7 +39,7 @@ void birthday_attack()
 		unsigned int i, hash_len;
 
 		sm3_hash(sample1, sample1_len, hash_value, &hash_len);
-		printf("raw data: %s\n", sample1);
+		//printf("raw data: %d\n", sample1[0]);
 		printf("hash length: %d bytes.\n", hash_len);
 		printf("hash value:\n");
 		for (i = 0; i < hash_len; i++)

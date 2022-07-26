@@ -1,3 +1,5 @@
+import sage
+
 F = GF (0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2F)  #生成一个给定阶数的全局唯一有限域
 C = EllipticCurve ([F (0), F (7)])     #构造出椭圆曲线
 
