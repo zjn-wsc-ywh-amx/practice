@@ -12,7 +12,7 @@
 T_table可以通过设置一个flag位来直接生成该表，也可以通过直接复制粘贴，这里采用第二种方法在sm4_table中直接将表给出，其作用主要体现在每一轮迭代时不是采用T函数而是进行查表运算减少了异或、移位等运算从而加快了速度。  
 	将32位中8位进行摘取的方式这里采用在移位后强制类型转化为8位从而得到索引直接进行查表运算即可  
 	运行结果如下：  
-![Alt text](./T_table result.png)  
+![image](https://github.com/zjn-wsc-ywh-amx/practice/blob/master/SM4_/T_table%20result.png)  
 ![Alt text](./T_table result2.png)  
 	第一张为单次加密，第二张为15次加密，可以看出在对单次加密时使用T_table后速度并没有加快，而在将该过程扩展到15次时这时T_table的作用显示了出来。而在日常对消息加密时消息长度一般很长当采用ECB模式进行加密时这个时候T_table可以明显加快速度。
 
