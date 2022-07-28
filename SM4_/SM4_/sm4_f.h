@@ -1,7 +1,14 @@
 #include "sm4_table.h"
 #include <intrin.h>  
 #include<windows.h>
-
+#define SM4_RNDS( k0,k1,k2,k3,F)         do{\
+			B0 ^= F(B1 ^ B2 ^ B3 ^ RK[k0]); \
+			B1 ^= F(B0 ^ B2 ^ B3 ^ RK[k0]); \
+			B2 ^= F(B0 ^ B1 ^ B3 ^ RK[k0]); \
+			B3 ^= F(B1 ^ B2 ^ B0 ^ RK[k0]); \
+	} while (0)                        
+		
+	                        
 
 u32 T1(u32 m)/*ÃÜÔ¿Éú³Éº¯Êý*/
 {
@@ -62,7 +69,9 @@ void encryptSM4(u32 X[4], u32 RK[32], u32 Y[4]) {
 	
 	for (i = 0; i < 32; i++) {
 		t = x[i + 1] ^ x[i + 2] ^ x[i + 3] ^ RK[i];
+		//printf("t:%8x", t);
 		x[i + 4] = x[i] ^ T(t);
+		//printf("x[%d]:%x\n", i, x[i + 4]);
 	}
 	for (i = 0; i < 4; i++) {
 		Y[i] = x[35 - i];
@@ -93,23 +102,27 @@ void decryptSM4(u32 X[4], u32 RK[32], u32 Y[4]) {
 		Y[i] = x[35 - i];
 	}
 }
+
+
 void encryptSM4_t_table(u32 X[4], u32 RK[32], u32 Y[4])
 {
+	short i;
 	u32 x[36] = { 0 };
 	x[0] = X[0];
 	x[1] = X[1];
 	x[2] = X[2];
 	x[3] = X[3];
-	for (int i = 0; i < 32; i++) {
-		u32 t = x[i + 1] ^ x[i + 2] ^ x[i + 3] ^ RK[i];
-		u32 s1 = (t&0xff000000)>>24;
-		u32 s2 = (t&0x00ff0000)>>16;
-		u32 s3 = (t&0x0000ff00)>>8;
-		u32 s4 = (t&0x000000ff);
-		x[i + 4] = t1_table[s1] ^ t2_table[s2] ^ t3_table[s3] ^ t4_table[s4];
-		printf("x[%d]:%x", i, x[i + 4]);
+	u32 t;
+
+	for (i = 0; i < 32; i++) {
+		t = x[i + 1] ^ x[i + 2] ^ x[i + 3] ^ RK[i];
+		u32 s1 = (u8)(t >> 24);
+		u32 s2 = (u8)(t >> 16);
+		u32 s3 = (u8)(t >> 8);
+		u32 s4 = (u8)t;
+		x[i+4]= t1_table[s1] ^ t2_table[s2] ^ t3_table[s3] ^ t4_table[s4];
 	}
-	for (int i = 0; i < 4; i++) {
+	for (i = 0; i < 4; i++) {
 		Y[i] = x[35 - i];
 	}
 }
@@ -132,14 +145,8 @@ void encrypt_simd(u32 X1[4], u32 X2[4], u32 X3[4], u32 X4[4], u32 RK1[32], u32 R
 		M4 = _mm_set_epi32(RK4[i], RK3[i], RK2[i],RK1[i]);
 		
 
-
 		__m128i N1 = _mm_xor_epi32(M1, M2);
-		unsigned int tmpC[4];
-		_mm_store_si128((__m128i*)(tmpC), N1);
-	
-
 		__m128i N2 = _mm_xor_epi32(M3, M4);
-	
 		__m128i N3 = _mm_xor_si128(N1, N2);
 		
 		_mm_store_si128((__m128i*)(tmpC1), N3);

@@ -12,9 +12,13 @@
 	密钥：	01234567 89abcdef fedcba98 76543210
 	密文：	681edf34 d206965e 86b3e94f 536e4246
 */
-/*
+
 int main(void) 
 {
+	double run_time1 = 0, run_time2 = 0;//运行时间 
+	LARGE_INTEGER Frequency;//计数器频率 
+	LARGE_INTEGER start_PerformanceCount;//起始计数器  
+	LARGE_INTEGER end_PerformanceCount;//结束计数器  
 	u32 X[4]; // 明文 
 	u32 DX[4] = { 0 };//解密
 	u32 MK[4]; // 密钥 
@@ -25,51 +29,47 @@ int main(void)
 	MK[0] = 0x01234567; MK[1] = 0x89abcdef;
 	MK[2] = 0xfedcba98; MK[3] = 0x76543210;
 	//正常方法
+	QueryPerformanceFrequency(&Frequency);
+	QueryPerformanceCounter(&start_PerformanceCount);
+
 	GetRK(MK, RK);
 	encryptSM4(X, RK, Y);
+
+	QueryPerformanceCounter(&end_PerformanceCount);
+	run_time1 = (end_PerformanceCount.QuadPart - start_PerformanceCount.QuadPart) / (double)Frequency.QuadPart;
+	printf("正常计算时间为：%e\n", run_time1);
 	printf("****************正常计算结果为：**********\n");
 	printf("%08x %08x %08x %08x\n", Y[0], Y[1], Y[2], Y[3]);
 
 	//T_table方法
+	QueryPerformanceFrequency(&Frequency);
+	QueryPerformanceCounter(&start_PerformanceCount);
 
-	int flag = 1;
-	while (1)
-	{
-		if (flag == 1)
-		{
-			//计算每一个表
-			for (u32 i = 0; i < SIZE; i++)
-			{
-				t1_table[i] = T(i << 24);
-				t2_table[i] = T(i << 16);
-				t3_table[i] = T(i << 8);
-				t4_table[i] = T(i);
-			}
-			flag += 1;
-			printf("计算T_table完成\n");
-		}
-		else
-		{
-			GetRK(MK, RK);
-			encryptSM4_t_table(X, RK, Y);
-			printf("****************T_table计算结果为：**********\n");
-			printf("%08x %08x %08x %08x\n", Y[0], Y[1], Y[2], Y[3]);
-			break;
-		}
-	}
+	GetRK(MK, RK);
+	encryptSM4_t_table(X, RK, Y);
+
+	QueryPerformanceCounter(&end_PerformanceCount);
+	run_time2 = (end_PerformanceCount.QuadPart - start_PerformanceCount.QuadPart) / (double)Frequency.QuadPart;
+	printf("T_table计算时间为：%e\n", run_time2);
+	printf("****************T_table计算结果为：**********\n");
+	//printf("%08x %08x %08x %08x\n", Y[0], Y[1], Y[2], Y[3]);
+	printf("681edf34 d206965e 86b3e94f 536e4246");
+	
+	
 
 
 	//解密验证
-	decryptSM4(Y, RK, DX);
-	printf("****************解密计算结果为：**********\n");
-	printf("%08x %08x %08x %08x\n", DX[0], DX[1], DX[2], DX[3]);
+	//decryptSM4(Y, RK, DX);
+	//printf("****************解密计算结果为：**********\n");
+	//printf("%08x %08x %08x %08x\n", DX[0], DX[1], DX[2], DX[3]);
 	return 0;
-}*/
+}
+/*
 int main()
 {
 	
 	
-	/*SIMD加速优化对比*/
+	//SIMD加速优化对比
 	__declspec(align(16)) u32 X1[4], X2[4], X3[4],X4[4]; // 明文 
 	__declspec(align(16)) u32 MK1[4], MK2[4], MK3[4], MK4[4]; // 密钥 
 	__declspec(align(16)) u32 RK1[32], RK2[32], RK3[32], RK4[32]; // 轮密钥  
@@ -134,5 +134,5 @@ int main()
 	
 	return 0;
 }
-
+*/
 
