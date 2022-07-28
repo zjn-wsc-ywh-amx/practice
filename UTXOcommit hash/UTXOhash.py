@@ -7,7 +7,8 @@ def str_hash_int(msg:str):
 def Gen_msg_ECCP(msg):#求消息对应的椭圆曲线的点的坐标
     nonce = 0
     while True:
-        temp = msg + str(nonce)
+        t=str_hash_int(msg)
+        temp =str(nonce)+str(t)
         x = str_hash_int(temp)
         y = ECC.get_y(x)  # 求出哈希值作为x，求出对应的y
         if y != None:
