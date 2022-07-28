@@ -16,5 +16,5 @@ server.py文件模拟Bob，同样包含三个过程，分别为：密钥协商 �
 ## Bob运行结果
 ![image](https://github.com/zjn-wsc-ywh-amx/practice/blob/master/PGP%20in%20SM2/PGP-Bob.png)
 #  参考文献
-[](https://blog.csdn.net/qq_42248536/article/details/105805078)
-[](https://blog.csdn.net/qq_43339242/article/details/123221091)
+https://blog.csdn.net/qq_42248536/article/details/105805078  
+https://blog.csdn.net/qq_43339242/article/details/123221091
