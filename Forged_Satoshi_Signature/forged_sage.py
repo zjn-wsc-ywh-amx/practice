@@ -17,6 +17,5 @@ def forge(c, a=-1):  # Create a forged 'ECDSA'  (hashless) signature
   print ('hash1 = %d'%m)
   print ('r1 = %d'%(int(R.xy()[0])))
   print ('s1 = %d'%s)
-def verify():
-    pass
-for c in range(1,10):
+
+forge(1)

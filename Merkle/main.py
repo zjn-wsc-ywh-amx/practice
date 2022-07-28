@@ -313,6 +313,8 @@ def reconstruct(Input,KeyPath):
           print(Input)
       if roothash_1==roothash:
           print("验证成功")
+      else:
+          print("验证失败")
 
 
 if __name__ == '__main__':
@@ -324,10 +326,10 @@ if __name__ == '__main__':
     list1=t.generatr_tree(itemList)
     t.merkle(list1)
     print(t.root_obj.hash)
-    print('前序遍历:\n节点名:数据：hash值', traverse(t.root_obj))
+    print('层次遍历:\n节点名:数据：hash值', traverse(t.root_obj))
     key=POP(t.root_obj,id=2)
     print("关键路径为",key)
 
     reconstruct(hash_verify[0],key)
-    print(POA(t.root_obj,id=2))
-
+    poa_list=POA(t.root_obj,id=2)
+    print("不存在性证明关键路径1:",poa_list[0],"\n不存在性证明关键路径2:",poa_list[1])

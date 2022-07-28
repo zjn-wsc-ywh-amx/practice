@@ -121,7 +121,7 @@ def Verify(r, s,e, G, P):
     ele2 = (r * w) % mod_value
     w = Point_Add(Multi(ele1, G), Multi(ele2, P))
     if (w == 0):
-        return False
+        return 0
     else:
         if (w[0] % mod_value == r):
             print("伪造通过")
@@ -129,7 +129,7 @@ def Verify(r, s,e, G, P):
         else:
             return 0
 
-#7.One can forge signature if the verification does not check m
+
 def Pretend(r, s,G, P):
     u = 3
     v = 3
