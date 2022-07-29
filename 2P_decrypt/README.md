@@ -13,3 +13,5 @@ server2-Bob.py文件模拟Bob，主要给Alice提供一些解密必要的信息�
 ![image](https://github.com/zjn-wsc-ywh-amx/practice/blob/master/2P_decrypt/Alice-two_party_decrypt.png)
 ## Bob端运行结果
 ![image](https://github.com/zjn-wsc-ywh-amx/practice/blob/master/2P_decrypt/Bob-two_party_decrypt.png)
+# 参考文献
+https://blog.csdn.net/qq_43339242/article/details/123221091
