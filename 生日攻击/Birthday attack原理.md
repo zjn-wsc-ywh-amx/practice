@@ -1,6 +1,10 @@
 # Birthday attack原理
 
-这个问题在数学上早有原型，叫做"[生日问题](https://en.wikipedia.org/wiki/Birthday_problem)"（birthday problem）：一个班级需要有多少人，才能保证每个同学的生日都不一样？
+
+
+## 什么是生日攻击
+
+​		这个问题在数学上早有原型，叫做"[生日问题](https://en.wikipedia.org/wiki/Birthday_problem)"（birthday problem）：一个班级需要有多少人，才能保证每个同学的生日都不一样？
 
 答案很出人意料。如果至少两个同学生日相同的概率不超过5%，那么这个班只能有7个人。事实上，一个23人的班级有50%的概率，至少两个同学生日相同；50人班级有97%的概率，70人的班级则是99.9%的概率（计算方法见后文）。
 
@@ -12,7 +16,7 @@
 
 这种利用哈希空间不足够大，而制造碰撞的攻击方法，就被称为生日攻击（birthday attack）。
 
-## 四、数学推导
+## 数学推导
 
 这一节给出生日攻击的数学推导。
 
@@ -34,7 +38,7 @@
 
 ![img](https://www.wangbase.com/blogimg/asset/201809/bg2018090503.png)
 
-## 五、哈希碰撞的公式
+## 哈希碰撞的公式
 
 上面的公式，可以进一步推导成一般性的、便于计算的形式。
 
@@ -62,6 +66,17 @@
 
 
 
+## 代码
 
 
-引用 https://blog.csdn.net/u014162133/article/details/82465538?ops_request_misc=%257B%2522request%255Fid%2522%253A%2522165827686516782395327207%2522%252C%2522scm%2522%253A%252220140713.130102334..%2522%257D&request_id=165827686516782395327207&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~sobaiduend~default-1-82465538-null-null.142^v32^pc_rank_34,185^v2^control&utm_term=birthday%20attack&spm=1018.2226.3001.4187
+
+使用的SM3hash算法参考http://blog.csdn.net/henter/。
+
+碰撞算法利用每次hash结果和前面的结果做比较，那么只要hash的过程中出现了两个相同的hash值那么就发生了碰撞。
+
+本次用到的hash的位数是256位，按照碰撞公式大概需要2.*10^128^*次运算能够碰撞出。
+
+
+
+
+
