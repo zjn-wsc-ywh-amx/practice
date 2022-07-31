@@ -1,6 +1,6 @@
-#impl RFC6979 on SM2
+# impl RFC6979 on SM2
 
-注：测试本代码需要安装gmssl库（可恶github和typora上显示的居然不一样，凑合看吧）
+注：使用test.py测试本代码需要安装gmssl库（可恶github和typora上显示的居然不一样，凑合看吧）,testsm2.py则不用
 
 ## RFC6979
 
@@ -37,6 +37,10 @@ SM2算法中的私钥是大整数，公钥是椭圆曲线上的点。公私钥�
 ![img](https://webencrypt.org/sm2/sm2encrypt.png)
 
 SM2的优势之一在于采用随机数，因此同样的明文数据每一次加密结果都不一样，而使用RFC6979生成的k值由消息与私钥决定，因此可能会得到一样的结果，故在实现中同时采用RFC6979和随机数生成k值，并将二者相加从而使每次的加密结果不同，这样既保证泄露随机数种子也不能泄密，又能使同样的明文密钥能够得到不同的加密数值。
+
+## 运行结果
+![image](https://user-images.githubusercontent.com/95538947/182013411-ea3cfd16-26f6-4018-aa33-213039c21135.png)
+
 
 ## 参考文献
 
