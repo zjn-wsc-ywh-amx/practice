@@ -2,7 +2,7 @@
 
 #### 代码说明：
 
-本项目代码有四个文件ECC.py,UTXOhash.py,UTXO.txt,hashoutput
+本项目代码主要有四个文件ECC.py,UTXOhash.py,UTXO.txt,hashoutput
 
 ##### ECC.py 主要实现了椭圆曲线的相关运算
 
