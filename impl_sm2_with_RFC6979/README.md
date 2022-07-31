@@ -28,7 +28,7 @@
 
 ## SM2
 
-RFC6979主要是为SM2中的随机数生成部分服务。SM2的代码参照了GMSSL库中的实现方式，流程图如下^[2]^
+RFC6979主要是为SM2中的随机数生成部分服务。mysm2.py中的代码参照了GMSSL库中的实现方式，流程图如下^[2]^
 
 ![img](https://img-blog.csdn.net/20180622110145207?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3NhbXNobzI=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70)
 
